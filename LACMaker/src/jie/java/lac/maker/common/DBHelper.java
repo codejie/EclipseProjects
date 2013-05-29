@@ -21,7 +21,7 @@ public class DBHelper {
 			Class.forName("org.sqlite.JDBC");
 			
 			conn = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
-			conn.setAutoCommit(false);			
+			conn.setAutoCommit(false);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			return -1;
@@ -32,6 +32,7 @@ public class DBHelper {
 	public void close() {
 		if (conn != null) {
 			try {
+				conn.commit();
 				conn.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -39,7 +40,7 @@ public class DBHelper {
 		}
 	}
 	
-	private void execSQL(final String sql) throws SQLException {
+	public void execSQL(final String sql) throws SQLException {
 		Statement stat = null;
 		try {
 			stat = conn.createStatement();
@@ -49,7 +50,7 @@ public class DBHelper {
 		}
 	}	
 	
-	private int execSQLWithReturn(final String sql) throws SQLException {
+	public int execSQLWithReturn(final String sql) throws SQLException {
 		int last = -1;
 		Statement stat = null;
 		try {

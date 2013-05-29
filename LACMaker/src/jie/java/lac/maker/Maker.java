@@ -10,4 +10,12 @@ public class Maker {
 
 	}
 
+	private String makefile = null;
+	
+	public Maker() {
+	}
+	
+	public boolean load(final String makefile) {
+		return false;
+	}
 }
