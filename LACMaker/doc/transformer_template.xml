@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transform>
     <owner></owner>    
-    <dictionary>
-        <file></file>
-        <title></title>
-        <version></version>
-        <source></source>
-        <target></target>
-        <extra_field></extra_field>                
-    </dictionary>
+    <dictionary><file>1</file><title>2</title><version>3</version><source>4</source><target>5</target><extra_field>6</extra_field></dictionary>
     <dictionary>
         
     </dictionary>
