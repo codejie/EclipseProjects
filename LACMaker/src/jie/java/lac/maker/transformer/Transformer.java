@@ -1,9 +1,14 @@
 package jie.java.lac.maker.transformer;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import jie.java.lac.maker.common.DBHelper;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -20,7 +25,9 @@ public class Transformer {
 		trans.analyse(".\\doc\\transformer_template.xml");
 	}
 	
-	public boolean analyse(final String file) {
+	public List<DictInfo> analyse(final String file) {
+		
+		ArrayList<DictInfo> dict = new ArrayList<DictInfo>();
 		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -30,14 +37,41 @@ public class Transformer {
 			NodeList node = doc.getElementsByTagName("dictionary");
 			for (int i = 0; i < node.getLength(); ++ i) {
 				Node n = node.item(i);
-				System.out.println(n.getNodeType() + " - " +  n.getNodeName());
-				NodeList c = n.getChildNodes();
-				for (int j = 0; j < c.getLength(); ++ j) {
-					Node m = c.item(j);
-					System.out.println(m.getNodeType() + " - " +  m.getNodeName());
+				if (n.getNodeType() == Node.ELEMENT_NODE) {
+					DictInfo info = new DictInfo();
+					NodeList child = n.getChildNodes();
+					for (int j = 0; j < child.getLength(); ++ j) {
+						n = child.item(j);
+						if (n.getNodeType() == Node.ELEMENT_NODE) {
+							if (n.getNodeName() == "id") {
+								info.id = Integer.valueOf(n.getChildNodes().item(0).getNodeValue());
+								System.out.println(n.getNodeName() + " value : " + n.getChildNodes().item(0).getNodeValue());
+							} else if (n.getNodeName() == "file") {
+								info.file = n.getChildNodes().item(0).getNodeValue();
+								System.out.println(n.getNodeName() + " value : " + n.getChildNodes().item(0).getNodeValue());
+							} else if (n.getNodeName() == "title") {
+								info.title = n.getChildNodes().item(0).getNodeValue();
+								System.out.println(n.getNodeName() + " value : " + n.getChildNodes().item(0).getNodeValue());
+							} else if (n.getNodeName() == "revision") {
+								info.revision = Integer.valueOf(n.getChildNodes().item(0).getNodeValue());
+								System.out.println(n.getNodeName() + " value : " + n.getChildNodes().item(0).getNodeValue());
+							} else if (n.getNodeName() == "source") {
+								info.source = n.getChildNodes().item(0).getNodeValue();
+								System.out.println(n.getNodeName() + " value : " + n.getChildNodes().item(0).getNodeValue());
+							} else if (n.getNodeName() == "target") {
+								info.target = n.getChildNodes().item(0).getNodeValue();
+								System.out.println(n.getNodeName() + " value : " + n.getChildNodes().item(0).getNodeValue());
+							} else if (n.getNodeName() == "extra_field") {
+								info.extra_field = n.getChildNodes().item(0).getNodeValue();
+								System.out.println(n.getNodeName() + " value : " + n.getChildNodes().item(0).getNodeValue());
+							}
+						}
+					}
+					if (info.check()) {
+						dict.add(info);
+					}
 				}
-			}
-			
+			}			
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -47,60 +81,65 @@ public class Transformer {
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}		
+		
+		return dict;
+	}
+	
+	public boolean transform(final String dbfile, final List<DictInfo> dict) {
+		DBHelper db = new DBHelper();
+		
+		try {
+			if (db.init(dbfile) != 0) {
+				return false;
+			}			
+			
+			for (final DictInfo info : dict) {
+				if (!transform(db, info)) {
+					return false;
+				}
+			}
+		} catch (SQLException e) {
+			
+			return false;
+		} finally {
+			if (db != null) {
+				db.close();
+			}
 		}
-		
-		
 		return true;
 	}
 	
+	public boolean transform(DBHelper db, final DictInfo info) throws SQLException {
+		//db
+		makeDatabase(db, info);
+		
+		//block
+		//data
+		
+		
+		return false;
+	}
 	
-	public static void processNode(Node node,int deep)//分析一个节点
-    {
-       deep++;
-       String space = "";
-       for(int i =  0 ; i < deep ; i++)//空白符用于控制缩进
-       {
-           space += "   ";
-       }
-       if(node instanceof Element)//如果当前节点是Element
-       {
-           System.out.println(space + node.getNodeName());//输出节点名字
- 
-           NamedNodeMap map = node.getAttributes();//先获取Element的属性
-           for(int i = 0 ;i < map.getLength(); i++)//输出Element的属性
-           {
-              System.out.println(space + "attr name "+ map.item(i).getNodeName());
-              System.out.println(space + "attr value" + map.item(i).getNodeValue());
-           }
-          
-           NodeList nodes = node.getChildNodes();//获取子节点
-           for(int i = 0 ; i < nodes.getLength() ; i++)//递归输出子节点信息
-           {
-              processNode(nodes.item(i), deep);
-           }
-                    
-       }else if(node instanceof Text)//如果节点是文本
-       {
-           //if(!node.getNodeValue().trim().equals(""))//如果文本不是空白符，就输出文本内容
-              System.out.println(space+"text: " + node.getNodeValue().trim());
-       }
-      
-    }
-   
-    public static void  processDoc(Document doc)
-    {
-       System.out.println("start process doc");
-       System.out.println("doc uri " + doc.getDocumentURI());     
-       System.out.println("version " +doc.getXmlVersion());
-       System.out.println("encoding "+doc.getXmlEncoding());
-       //NodeList nodes = doc.getChildNodes();
-       NodeList nodes = doc.getElementsByTagName("dictionary");
-       //System.out.println(doc.getNodeName());
- 
-       for(int i = 0 ; i < nodes.getLength() ;i++)
-       {
-           processNode(nodes.item(i),0);
-       }
-      
-    }	
+	private void makeDatabase(DBHelper db, DictInfo info) throws SQLException {
+		//create tables
+		String sql = "CREATE TABLE [block_info_" + info.id + "] ([idx] INTEGER PRIMARY KEY, [offset] INTEGER, [length] INTEGER, [start] INTEGER, [end] INTEGER);";
+		db.execSQL(sql);
+		
+		sql = "CREATE TABLE [word_index_" + info.id + "] ( [word_idx] INTEGER, [idx] INTEGER, [offset] INTEGER, [length] INTEGER, [block1] INTEGER);";
+		db.execSQL(sql);
+		
+		sql = "CREATE INDEX [index_word_index_" + info.id + "_word_idx] ON [word_index_" + info.id + "] (word_idx ASC);";
+		db.execSQL(sql);
+
+		sql = "CREATE TABLE [word_extra_data_" + info.id + "] ([word_idx] INTEGER, [text_data] TEXT, [int_data] INTEGER)";
+		db.execSQL(sql);
+
+		sql = "CREATE INDEX [index_word_extra_data_" + info.id + "_word_idx] ON [word_extra_data_" + info.id + "] (word_idx ASC);";
+		db.execSQL(sql);
+		
+		//write dict info		
+	}
+
+	
 }
