@@ -22,7 +22,8 @@ public class Transformer {
 
 	public static void main(String[] args) {
 		Transformer trans = new Transformer();
-		trans.analyse(".\\doc\\transformer_template.xml");
+		List<DictInfo> listDict = trans.analyse(".\\doc\\transformer_template.xml");
+		trans.transform("lac2.db", listDict);
 	}
 	
 	public List<DictInfo> analyse(final String file) {
@@ -113,14 +114,22 @@ public class Transformer {
 	public boolean transform(DBHelper db, final DictInfo info) throws SQLException {
 		//db
 		makeDatabase(db, info);
-		
-		//block
-		//data
-		
-		
-		return false;
+		//dict base info
+		insertBaseInfo(db, info);
+		//scan dict file
+		FileScan scan = new FileScan(info.id, info.file, db);
+		if (scan.scan() != 0)
+			return false;
+		return true;
 	}
 	
+	private void insertBaseInfo(DBHelper db, DictInfo info) throws SQLException {
+		String sql = "INSERT INTO dict_info ([idx],[state],[title],[file],[revision],[source],[target],[owner]) VALUES ("
+				+ info.id + ",0,'" + info.title + "','" + info.file + "'," + info.revision + ",'" + info.source + "','"
+				+ info.target + "','jie')";
+		db.execSQL(sql);
+	}
+
 	private void makeDatabase(DBHelper db, DictInfo info) throws SQLException {
 		//create tables
 		String sql = "CREATE TABLE [block_info_" + info.id + "] ([idx] INTEGER PRIMARY KEY, [offset] INTEGER, [length] INTEGER, [start] INTEGER, [end] INTEGER);";
@@ -138,7 +147,6 @@ public class Transformer {
 		sql = "CREATE INDEX [index_word_extra_data_" + info.id + "_word_idx] ON [word_extra_data_" + info.id + "] (word_idx ASC);";
 		db.execSQL(sql);
 		
-		//write dict info		
 	}
 
 	
