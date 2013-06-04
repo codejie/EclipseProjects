@@ -1,6 +1,7 @@
 package jie.java.lac.maker.transformer;
 
 public class DictInfo {
+	public String owner = null;	
 	public Integer id = -1;
 	public String file = null;
 	public String title = null;
@@ -10,7 +11,7 @@ public class DictInfo {
 	public String extra_field = null;
 	
 	public boolean check() {
-		return id != -1 && file != null && title != null && source != null 
+		return owner != null && id != -1 && file != null && title != null && source != null 
 				&& target != null;
 	}
 	

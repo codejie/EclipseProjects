@@ -22,11 +22,16 @@ public class Transformer {
 
 	public static void main(String[] args) {
 		Transformer trans = new Transformer();
-		List<DictInfo> listDict = trans.analyse(".\\doc\\transformer_template.xml");
+		List<DictInfo> listDict = trans.analyse(".\\doc\\transformer_vicon.xml");
 		trans.transform("lac2.db", listDict);
 	}
 	
-	public List<DictInfo> analyse(final String file) {
+	public boolean  transform(final String makefile, final String dbfile) {
+		List<DictInfo> listDict = analyse(makefile);
+		return transform(dbfile, listDict);
+	}
+	
+	private List<DictInfo> analyse(final String file) {
 		
 		ArrayList<DictInfo> dict = new ArrayList<DictInfo>();
 		
@@ -34,12 +39,23 @@ public class Transformer {
 		try {
 			Document doc = factory.newDocumentBuilder().parse(file);
 //			processDoc(doc);
-//			
-			NodeList node = doc.getElementsByTagName("dictionary");
+			NodeList node = doc.getElementsByTagName("owner");
+			if (node == null) {
+				return null;
+			}
+			
+			String owner = node.item(0).getChildNodes().item(0).getNodeValue();
+			
+			node = doc.getElementsByTagName("dictionary");
+			if (node == null) {
+				return null;
+			}
+			
 			for (int i = 0; i < node.getLength(); ++ i) {
 				Node n = node.item(i);
 				if (n.getNodeType() == Node.ELEMENT_NODE) {
 					DictInfo info = new DictInfo();
+					info.owner = owner;
 					NodeList child = n.getChildNodes();
 					for (int j = 0; j < child.getLength(); ++ j) {
 						n = child.item(j);
@@ -72,7 +88,8 @@ public class Transformer {
 						dict.add(info);
 					}
 				}
-			}			
+			}
+
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -87,7 +104,7 @@ public class Transformer {
 		return dict;
 	}
 	
-	public boolean transform(final String dbfile, final List<DictInfo> dict) {
+	private boolean transform(final String dbfile, final List<DictInfo> dict) {
 		DBHelper db = new DBHelper();
 		
 		try {
@@ -101,7 +118,7 @@ public class Transformer {
 				}
 			}
 		} catch (SQLException e) {
-			
+			e.printStackTrace();
 			return false;
 		} finally {
 			if (db != null) {
@@ -111,7 +128,7 @@ public class Transformer {
 		return true;
 	}
 	
-	public boolean transform(DBHelper db, final DictInfo info) throws SQLException {
+	private boolean transform(DBHelper db, final DictInfo info) throws SQLException {
 		//db
 		makeDatabase(db, info);
 		//dict base info
@@ -126,7 +143,7 @@ public class Transformer {
 	private void insertBaseInfo(DBHelper db, DictInfo info) throws SQLException {
 		String sql = "INSERT INTO dict_info ([idx],[state],[title],[file],[revision],[source],[target],[owner]) VALUES ("
 				+ info.id + ",0,'" + info.title + "','" + info.file + "'," + info.revision + ",'" + info.source + "','"
-				+ info.target + "','jie')";
+				+ info.target + "','" + info.owner + "')";
 		db.execSQL(sql);
 	}
 

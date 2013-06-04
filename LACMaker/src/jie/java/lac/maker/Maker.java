@@ -1,21 +1,27 @@
 package jie.java.lac.maker;
 
+import jie.java.lac.maker.databasegenerator.Generator;
+import jie.java.lac.maker.transformer.Transformer;
+
 public class Maker {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		Maker maker = new Maker();
+		maker.load(".\\doc\\transformer_vicon.xml");
 	}
 
 	private String makefile = null;
 	
-	public Maker() {
-	}
-	
 	public boolean load(final String makefile) {
-		return false;
+		
+		Generator generator = new Generator(Generator.DEFAULT_DB_FILE);
+		if (generator.generate() != 0)
+			return false;
+		
+		Transformer transformer = new Transformer();
+		return transformer.transform(makefile, Generator.DEFAULT_DB_FILE);
 	}
 }

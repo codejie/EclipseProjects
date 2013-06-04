@@ -44,7 +44,7 @@ public class Generator {
 		String sql = "CREATE TABLE [sys_info] ([idx] INTEGER,[Value] TEXT)";
 		dbHelper.execSQL(sql);
 		
-		sql = "CREATE TABLE [dict_info] ([idx] INTEGER, [state] INTEGER, [title] TEXT, [file] TEXT, [revision] INTEGER, [offset] INTEGER, [d_decoder] INTEGER, [x_decoder] INTEGER, [source] TEXT, [target] TEXT, [owner] TEXT, version INTEGER)";
+		sql = "CREATE TABLE [dict_info] ([idx] INTEGER, [state] INTEGER, [title] TEXT, [file] TEXT, [revision] INTEGER, [offset] INTEGER, [d_decoder] INTEGER, [x_decoder] INTEGER, [source] TEXT, [target] TEXT, [owner] TEXT)";
 		dbHelper.execSQL(sql);
 		
 		sql = "CREATE TABLE [word_info] ([idx] INTEGER PRIMARY KEY AUTOINCREMENT, [word] TEXT NOT NULL, [flag] INTEGER)";

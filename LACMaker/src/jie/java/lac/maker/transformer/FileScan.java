@@ -111,7 +111,10 @@ public class FileScan {
 			
 			if(scanData(dictid, ld2file + ".inflated", db) != 0) {
 				return -1;
-			}			
+			}
+			
+			updateOffsetInfo(db, dictid, offsetInflatedXml);
+			
 		} catch (final ArrayIndexOutOfBoundsException e) {
 			return -1;
 		} catch (SQLException e) {
@@ -573,7 +576,12 @@ public class FileScan {
 //////////////////////////////////////////////////////////
 	
 	private void updateDecoderInfo(DBHelper db, int dictid, Decoder wordDecoder, Decoder xmlDecoder) throws SQLException {
-		String sql = "UPDATE dict_info (d_decoder, x_decoder) VALUES (" + wordDecoder.getIndex() + "," + xmlDecoder.getIndex() + ") WHERE idx=" + dictid;
+		String sql = "UPDATE dict_info SET d_decoder=" + wordDecoder.getIndex() + ",x_decoder=" + xmlDecoder.getIndex() + " WHERE idx=" + dictid;
+		db.execSQL(sql);
+	}
+	
+	private void updateOffsetInfo(DBHelper db, int dictid, int offset) throws SQLException {
+		String sql = "UPDATE dict_info SET offset=" + offset + " WHERE idx=" + dictid;
 		db.execSQL(sql);
 	}
 	
