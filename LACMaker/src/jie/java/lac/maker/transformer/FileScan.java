@@ -500,7 +500,9 @@ public class FileScan {
 			//getReferenceData(wordid, index, buf, idx[3], idx[0], dataListener);
 		} else if ((idx[3] > 0) && ((idx[5] - idx[1]) == 0)) {
 			//only index
-			//wordid = dataListener.OnWordData(WordFlag.Reference, index, buf, idx[0] + idx[3] * 4, (idx[4] - idx[0]) - idx[3] * 4);
+			// for all word, include these word that just be index, for example, code and coding.
+			wordid = dataListener.OnWordData(WordFlag.Reference, index, buf, idx[0] + idx[3] * 4, (idx[4] - idx[0]) - idx[3] * 4);
+			getXmlIndexData(wordid, index, buf, idx[3], idx[0], dataListener);
 			//getReferenceData(wordid, index, buf, idx[3], idx[0], dataListener);
 		}
 	}

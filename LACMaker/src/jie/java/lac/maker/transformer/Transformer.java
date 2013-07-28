@@ -22,8 +22,9 @@ public class Transformer {
 
 	public static void main(String[] args) {
 		Transformer trans = new Transformer();
-		List<DictInfo> listDict = trans.analyse(".\\doc\\transformer_vicon.xml");
-		trans.transform("lac2.db", listDict);
+		//List<DictInfo> listDict = trans.analyse(".\\doc\\transformer_vicon.xml");
+		List<DictInfo> listDict = trans.analyse(".\\doc\\transformer_3gpp.xml");
+		trans.transform("3gpp.db", listDict);
 	}
 	
 	public boolean  transform(final String makefile, final String dbfile) {

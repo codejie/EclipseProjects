@@ -10,7 +10,8 @@ public class Maker {
 	 */
 	public static void main(String[] args) {
 		Maker maker = new Maker();
-		maker.load(".\\doc\\transformer_vicon.xml");
+		//maker.load(".\\doc\\transformer_3gpp.xml");
+		maker.load(".\\doc\\transformer_vicon_ec.xml");
 	}
 
 	private String makefile = null;

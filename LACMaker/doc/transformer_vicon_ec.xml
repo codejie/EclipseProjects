@@ -10,15 +10,5 @@
         <target>zh</target>
         <extra_field>N</extra_field>        
     </dictionary>
-    
-    <dictionary>
-        <id>101</id>
-        <file>.\data\Vicon Chinese(S)-English Dictionary.ld2</file>
-        <title>Vicon Chinese(S)-English Dictionary</title>
-        <revision>1</revision>
-        <source>zh</source>
-        <target>en</target>
-        <extra_field>N</extra_field>       
-        
-    </dictionary>
+
 </transform>

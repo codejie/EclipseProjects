@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transform>
+    <owner>jie</owner>    
+    <dictionary>
+        <id>900</id>
+        <file>.\data\3GPP.ld2</file>
+        <title>3GPP</title>
+        <revision>1</revision>
+        <source>en</source>
+        <target>en</target>
+        <extra_field>N</extra_field>        
+    </dictionary>
+</transform>
